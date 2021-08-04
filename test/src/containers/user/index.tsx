@@ -1,22 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { user } from '../../types/user';
 import { Box, Container } from '@material-ui/core';
-import UserTable from '../../components/UserTable/UserTable';
+import React from 'react';
 import Header from '../../components/Header/Header';
+import UserTable from '../../components/UserTable/UserTable';
 
-export type UsersProps = {
-  users: user[];
-};
-
-function Users(props: UsersProps) {
-  const { users } = props;
+function Users() {
   return (
     <Box>
       <Header />
       <Container>
         <h1>Users Page</h1>
-        <UserTable users={users} />
+        <UserTable />
       </Container>
     </Box>
   );

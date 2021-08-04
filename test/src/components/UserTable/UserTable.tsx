@@ -10,8 +10,10 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import usersApi from '../../pages/api/usersApi';
 import { user } from '../../types/user';
 
 const useStyles = makeStyles({
@@ -42,35 +44,85 @@ const StyledTableRow = withStyles((theme: Theme) =>
   })
 )(TableRow);
 
-export default function UserTable(props: { users: user[] }) {
-  const { users } = props;
-
+export default function UserTable() {
   const classes = useStyles();
+
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [users, setUsers] = useState<user[]>([]);
+  const [filters, setFilters] = useState({
+    page: 1,
+    limit: 5,
+  });
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data, totalUsers } = await usersApi.getAll({
+          page: filters.page + 1,
+          limit: filters.limit,
+        });
+        setUsers(data);
+        setTotalUsers(totalUsers);
+      } catch (e) {
+        console.log('Failer fetch users: ', e);
+      }
+    })();
+  }, [filters]);
+
+  const handleChangePage = (e: unknown, newPage: number) => {
+    setFilters((prevFilter) => ({
+      ...prevFilter,
+      page: newPage,
+    }));
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFilters((filter) => ({
+      ...filter,
+      limit: +event.target.value,
+      page: 1,
+    }));
+  };
+
   const titles = ['Name', '@ Email', 'Position'];
-
+  console.log('user', users);
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            {titles.map((title, index) => (
-              <StyledTableCell key={index} align="right">
-                {title}
-              </StyledTableCell>
-            ))}
-          </TableRow>
-        </TableHead>
+    <Paper>
+      <TableContainer>
+        <Table className={classes.table} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              {titles.map((title, index) => (
+                <StyledTableCell key={index}>{title}</StyledTableCell>
+              ))}
+            </TableRow>
+          </TableHead>
 
-        <TableBody>
-          {users?.map((user) => (
-            <StyledTableRow key={user.id}>
-              <TableCell align="right">{user.name}</TableCell>
-              <TableCell align="right">{user.email}</TableCell>
-              <TableCell align="right">{user.position}</TableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          <TableBody>
+            {users?.map((user) => (
+              <StyledTableRow key={user.id}>
+                <TableCell>{user.name}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.position}</TableCell>
+              </StyledTableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {totalUsers && (
+        <TablePagination
+          rowsPerPageOptions={[5, 10]}
+          component="div"
+          count={totalUsers}
+          rowsPerPage={filters.limit}
+          page={filters.page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      )}
+    </Paper>
   );
 }

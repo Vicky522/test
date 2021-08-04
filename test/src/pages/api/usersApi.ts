@@ -5,16 +5,20 @@ import { user } from "../../types/user"
 
 const usersApi ={
   async getAll({page, limit}: {page?: number, limit?:number}){
-    let users: user[] | []
-    const options = queryString.stringify({
+    let users: user[] = []
+    let usersWithOptions: user[] = []
+    const options = {
       page,
       limit
-    })
+    }
 
-    users = await axiosClient.get('users', { params: options})
+    usersWithOptions = await axiosClient.get('users', { params: options})
+    users = await axiosClient.get('users')
+    const totalUsers = users.length
 
     return {
-      data: users,
+      data: usersWithOptions,
+      totalUsers: totalUsers | 0
     }
   }
 }

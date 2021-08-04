@@ -1,13 +1,14 @@
+import { Box, Button, Container } from '@material-ui/core';
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Container, Button, Box } from '@material-ui/core';
 import Header from '../../components/Header/Header';
 
 function Count() {
   const [count, setCount] = useState<number>(0);
+
   const handleIncrease = (count: number) => {
     setCount(count + 1);
   };
+
   const handleReset = (count: number) => {
     if (confirm('Are you sure you want to reset counter?')) {
       setCount(0);
@@ -29,7 +30,7 @@ function Count() {
           >
             +
           </Button>
-          {count}
+          <span style={{ margin: '0 20px' }}>{count}</span>
           <Button
             variant="contained"
             onClick={() => {
@@ -45,3 +46,6 @@ function Count() {
 }
 
 export default Count;
+function makeStyles(arg0: (theme: any) => any) {
+  throw new Error('Function not implemented.');
+}
