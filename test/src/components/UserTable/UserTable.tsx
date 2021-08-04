@@ -50,7 +50,7 @@ export default function UserTable() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [users, setUsers] = useState<user[]>([]);
   const [filters, setFilters] = useState({
-    page: 1,
+    page: 0,
     limit: 5,
   });
 
