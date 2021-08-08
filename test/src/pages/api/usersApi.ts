@@ -18,7 +18,7 @@ const usersApi ={
 
     return {
       data: usersWithOptions,
-      totalUsers: totalUsers | 0
+      totalUsers: users ? totalUsers : 0
     }
   },
 

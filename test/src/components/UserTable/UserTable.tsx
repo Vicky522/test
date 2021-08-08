@@ -14,9 +14,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import React, { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import usersApi from '../../pages/api/usersApi';
 import { user } from '../../types/user';
 import UserDialog from '../Dialogs/UserDialog';
+import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles({
   table: {
@@ -59,27 +61,30 @@ export default function UserTable() {
     page: 0,
     limit: 5,
   });
+  const totalPage = Math.ceil(totalUsers / filters.limit);
 
   useEffect(() => {
-    (async () => {
+    const fetchUsers = async () => {
       try {
         const { data, totalUsers } = await usersApi.getAll({
+          ...filters,
           page: filters.page + 1,
-          limit: filters.limit,
         });
         setUsers(data);
         setTotalUsers(totalUsers);
       } catch (e) {
-        console.log('Failer fetch users: ', e);
+        console.log('Failed to fetch users', e.message);
       }
-    })();
-  }, [filters.limit, filters.page]);
+    };
 
-  const handleChangePage = (e: unknown, newPage: number) => {
-    setFilters((prevFilter) => ({
-      ...prevFilter,
+    fetchUsers();
+  }, [filters]);
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setFilters({
+      ...filters,
       page: newPage,
-    }));
+    });
   };
 
   const handleChangeRowsPerPage = (
@@ -88,7 +93,6 @@ export default function UserTable() {
     setFilters((filter) => ({
       ...filter,
       limit: +event.target.value,
-      page: 1,
     }));
   };
 
