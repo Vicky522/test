@@ -3,7 +3,7 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 
 export type InputFieldProps = {
-  form: object;
+  form: { control: any };
   name: string;
   label: string;
   disable?: boolean;
