@@ -1,3 +1,4 @@
+import { Box } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import {
   createStyles,
@@ -15,10 +16,15 @@ import TableRow from '@material-ui/core/TableRow';
 import React, { useEffect, useState } from 'react';
 import usersApi from '../../pages/api/usersApi';
 import { user } from '../../types/user';
+import UserDialog from '../Dialogs/UserDialog';
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
+  },
+
+  dialog: {
+    margin: '20px 10px',
   },
 });
 
@@ -67,7 +73,7 @@ export default function UserTable() {
         console.log('Failer fetch users: ', e);
       }
     })();
-  }, [filters]);
+  }, [filters.limit, filters.page]);
 
   const handleChangePage = (e: unknown, newPage: number) => {
     setFilters((prevFilter) => ({
@@ -87,7 +93,6 @@ export default function UserTable() {
   };
 
   const titles = ['Name', '@ Email', 'Position'];
-  console.log('user', users);
   return (
     <Paper>
       <TableContainer>
@@ -111,6 +116,10 @@ export default function UserTable() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Box className={classes.dialog}>
+        <UserDialog />
+      </Box>
 
       {totalUsers && (
         <TablePagination

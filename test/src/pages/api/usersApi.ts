@@ -12,14 +12,18 @@ const usersApi ={
       limit
     }
 
-    usersWithOptions = await axiosClient.get('users', { params: options})
-    users = await axiosClient.get('users')
+    usersWithOptions = await axiosClient.get('users?sortBy=createdAt&order=desc', { params: options})
+    users = await axiosClient.get('users?sortBy=createdAt&order=desc')
     const totalUsers = users.length
 
     return {
       data: usersWithOptions,
       totalUsers: totalUsers | 0
     }
+  },
+
+  async createUser(user:user){
+    return await axiosClient.post('users', user)
   }
 }
 
